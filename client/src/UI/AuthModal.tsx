@@ -6,10 +6,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import SignUpForm from './SignUpForm';
 import SignInForm from './SignInForm';
+import { useAppSelector } from '../redux/hooks';
 
-type ModalRegistrationProps = { isSignIn: boolean };
+export default function AuthModal(): JSX.Element {
+  const {isEdit, isSignIn, isSignUp} = useAppSelector((store) => store.user);
+  let authText;
+  if(isEdit) authText = 'Редактирование';
+  if(isSignIn) authText = 'Войти';
+  if(isSignUp) authText = 'Регистрация';
 
-export default function AuthModal({ isSignIn }: ModalRegistrationProps): JSX.Element {
   return (
     <div
       style={{
@@ -42,10 +47,10 @@ export default function AuthModal({ isSignIn }: ModalRegistrationProps): JSX.Ele
           e.stopPropagation();
         }}
       >
-        <DialogTitle style={{ textAlign: 'center' }}>Регистрация</DialogTitle>
+        <DialogTitle style={{ textAlign: 'center' }}>{authText}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            {isSignIn ?  <SignInForm /> : <SignUpForm />}
+            {isSignIn ? <SignInForm /> : <SignUpForm />}
           </DialogContentText>
         </DialogContent>
       </div>

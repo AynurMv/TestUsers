@@ -5,18 +5,54 @@ const fileMiddleware = require('../middlewares/file');
 
 const router = express.Router();
 
-router.post('/signup', fileMiddleware.single('photo'), async (req, res) => {
-  const { email, name, password, dateOfBirth, sex } = req.body;
+router.put('/', fileMiddleware.single('photo'), async (req, res) => {
+  const {
+    email, name, password, dateOfBirth, sex,
+  } = req.body;
   try {
     const hashedPass = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      email,
-      name,
-      photo: req.file.originalname,
-      password: hashedPass,
-      dateOfBirth,
-      sex,
+    console.log(req.session);
+    const editingUser = await User.findByPk(req.session.userSession.id);
+    editingUser.email = email;
+    editingUser.name = name;
+    if (req.photo?.originalname) editingUser.photo = req.photo.originalname;
+    editingUser.dateOfBirth = dateOfBirth;
+    editingUser.sex = sex;
+    editingUser.password = hashedPass;
+    await editingUser.save();
+    req.session.userSession = {
+      id: editingUser.id,
+      email: editingUser.email,
+      name: editingUser.name,
+      photo: editingUser.photo,
+      dateOfBirth: editingUser.dateOfBirth,
+      sex: editingUser.sex,
+    };
+    res.json(req.session.userSession);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+router.post('/signup', fileMiddleware.single('photo'), async (req, res) => {
+  const {
+    email, name, password, dateOfBirth, sex,
+  } = req.body;
+  try {
+    const hashedPass = await bcrypt.hash(password, 10);
+    const [newUser, created] = await User.findOrCreate({
+      where: { email },
+      defaults: {
+        name,
+        photo: req.file.originalname,
+        password: hashedPass,
+        dateOfBirth,
+        sex,
+      },
     });
+    if (!created) {
+      return res.status(401).send('Email is already in use');
+    }
     req.session.userSession = {
       id: newUser.id,
       email: newUser.email,
@@ -25,7 +61,7 @@ router.post('/signup', fileMiddleware.single('photo'), async (req, res) => {
       dateOfBirth: newUser.dateOfBirth,
       sex: newUser.sex,
     };
-    res.json(req.session.userSession);
+    return res.json(req.session.userSession);
   } catch (error) {
     console.log(error.message);
   }
@@ -36,7 +72,6 @@ router.post('/signin', async (req, res) => {
   try {
     const currUser = await User.findOne({ where: { email } });
     const compare = await bcrypt.compare(password, currUser.password);
-    console.log(currUser, compare);
     if (compare) {
       req.session.userSession = {
         id: currUser.id,
@@ -46,10 +81,9 @@ router.post('/signin', async (req, res) => {
         dateOfBirth: currUser.dateOfBirth,
         sex: currUser.sex,
       };
-      res.json(req.session.userSession);
-    } else {
-      res.sendStatus(401);
     }
+    res.json(req.session.userSession);
+    res.sendStatus(401);
   } catch (error) {
     console.log(error.message);
   }

@@ -1,12 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, Box, Chip, TextField, InputLabel, ListItem, MenuItem } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
-import Select from '@mui/material/Select';
-import { v4 as uuidv4 } from 'uuid';
+import { Button, Box, TextField} from '@mui/material';
 import { useAppDispatch } from '../redux/hooks';
-import { signInHandler, signUpHandler } from '../redux/userSice/userSlice';
+import { signInHandler } from '../redux/userSice/userSlice';
 
 type InputsType = {
   email: string;

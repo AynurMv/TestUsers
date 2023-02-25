@@ -34,6 +34,8 @@ app.use(
   }),
 );
 
+app.get('/test', (req, res) => res.json(req.session));
+
 app.use('/api/user', userRouter);
 
 app.listen(PORT, () => console.log(`Server has started on PORT ${PORT}`));

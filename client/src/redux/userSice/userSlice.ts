@@ -11,7 +11,7 @@ type BackendUser = {
   name: string;
   email: string;
   photo: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
   sex: string;
 };
 
@@ -20,12 +20,14 @@ type UsersState = {
   allUsers: BackendUser[];
   isSignUp: boolean;
   isSignIn: boolean;
+  isEdit: boolean;
 };
 
 // Define the initial state using that type
 const initialState: UsersState = {
   currUser: null,
   allUsers: [],
+  isEdit: false,
   isSignUp: false,
   isSignIn: false,
 };
@@ -57,29 +59,15 @@ export const userSlice = createSlice({
       ...state,
       isSignIn: action.payload,
     }),
+    setIsEdit: (state, action: PayloadAction<boolean>) => ({
+      ...state,
+      isEdit: action.payload,
+    }),
   },
 });
 
-export const { setUser, logoutUser, setAllUsers, setSignUp, setSignIn } = userSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-// export const selectUser = (state: RootState): UserState => state.user;
-
-// type FormUser = {
-//   name: string;
-//   password: string;
-// };
-
-// export const signInHandler =
-//   (e: React.FormEvent<HTMLFormElement>, formInput: FormUser): AppThunk =>
-//   (dispatch) => {
-//     axios
-//       .post<BackendUser>('/auth', formInput)
-//       .then((res) => dispatch(setUser({ ...res.data })))
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   };
+export const { setUser, logoutUser, setAllUsers, setSignUp, setSignIn, setIsEdit } =
+  userSlice.actions;
 
 type SignUpInputs = {
   name: string;
@@ -113,33 +101,62 @@ export const signUpHandler =
           dispatch(setSignUp(false));
         })
         .catch(console.log);
-      // axios
-      //   .post<BackendUser>('/auth', formInput)
-      //   .then((res) => dispatch(setUser({ ...res.data })))
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
     } else {
       console.log('No photo');
     }
   };
 
-  type SignInInputs = {
-    email: string;
-    password: string;
+type EditInputs = {
+  name: string;
+  email: string;
+  password: string;
+  dateOfBirth: string;
+  sex: string;
+  photo: File | null;
+};
+
+export const editHandler =
+  (e: React.FormEvent<HTMLFormElement>, formInput: EditInputs): AppThunk =>
+  (dispatch) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append('name', formInput.name);
+    data.append('password', formInput.password);
+    data.append('email', formInput.email);
+    if (formInput.photo) data.append('photo', formInput.photo);
+    data.append('dateOfBirth', formInput.dateOfBirth);
+    data.append('sex', formInput.sex);
+    fetch('http://localhost:3001/api/user', {
+      method: 'PUT',
+      body: data,
+      credentials: 'include',
+    })
+      .then((resp) => resp.json())
+      .then((resp: BackendUser) => {
+        console.log(resp);
+        dispatch(setUser(resp));
+        dispatch(setIsEdit(false));
+      })
+      .catch(console.log);
   };
 
-  export const signInHandler =
+type SignInInputs = {
+  email: string;
+  password: string;
+};
+
+export const signInHandler =
   (e: React.FormEvent<HTMLFormElement>, formInput: SignInInputs): AppThunk =>
   (dispatch) => {
     e.preventDefault();
-      axios
-        .post<BackendUser>('/api/user/signin', formInput)
-        .then((res) => {
-          dispatch(setUser({ ...res.data }))
-          dispatch(setSignIn(false));
-        })
-        .catch(console.log);
+    axios
+      .post<BackendUser>('/api/user/signin', formInput)
+      .then((res) => {
+        console.log(res.data, 'slice signIn cookie');
+        dispatch(setUser({ ...res.data }));
+        dispatch(setSignIn(false));
+      })
+      .catch(console.log);
   };
 
 export const logoutHandler =

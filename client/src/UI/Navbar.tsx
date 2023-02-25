@@ -16,14 +16,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setSignIn, setSignUp } from '../redux/userSice/userSlice';
 
-// const pages = ['Products', 'Pricing', 'Blog'];
 const pages = ['Войти', 'Зарегистрироваться'];
 
 const settings = ['Профиль', 'Выйти'];
 
-// type NavbarPropsType = {
-//   setIsSignUp: React.Dispatch<React.SetStateAction<boolean>>;
-// };
 
 export default function Navbar(): JSX.Element {
   const user = useAppSelector((state) => state.user);
@@ -42,14 +38,11 @@ export default function Navbar(): JSX.Element {
   const handleCloseNavMenu = (page: string): void => {
     console.log(page);
     switch (page) {
-      
       case pages[0]:
         dispatch(setSignIn(true));
-        // setIsSignUp(true);
         break;
       case pages[1]:
         dispatch(setSignUp(true));
-        // setIsSignUp(true);
         break;
       default:
         alert('Что-то пошло не так');
@@ -65,26 +58,26 @@ export default function Navbar(): JSX.Element {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-          {/* <Box sx={{ flexDirection: 'row' }}> */}
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            onClick={() => navigate('/')}
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            TestProject
-          </Typography>
-          {/* </Box> */}
+          {user.currUser && (
+            <Typography
+              onClick={() => navigate('/account')}
+              variant="h6"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              My account
+            </Typography>
+          )}
           <Box sx={{ flexGrow: 1, flexDirection: 'row', display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -124,7 +117,6 @@ export default function Navbar(): JSX.Element {
             )}
           </Box>
 
-          {/* <Box sx={{ flexDirection: 'row' }}> */}
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -144,8 +136,6 @@ export default function Navbar(): JSX.Element {
           >
             TestProject
           </Typography>
-          {/* </Box> */}
-          {/* <Box sx={{ flexDirection: 'row' }}> */}
           {!user.currUser && (
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
@@ -196,7 +186,6 @@ export default function Navbar(): JSX.Element {
               ))}
             </Menu>
           </Box>
-          {/* </Box> */}
         </Toolbar>
       </Container>
     </AppBar>

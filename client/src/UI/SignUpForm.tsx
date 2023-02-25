@@ -5,8 +5,9 @@ import { Button, Box, Chip, TextField, InputLabel, ListItem, MenuItem } from '@m
 import type { SelectChangeEvent } from '@mui/material/Select';
 import Select from '@mui/material/Select';
 import { v4 as uuidv4 } from 'uuid';
-import { useAppDispatch } from '../redux/hooks';
-import { signUpHandler } from '../redux/userSice/userSlice';
+import moment from 'moment';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { signUpHandler, editHandler } from '../redux/userSice/userSlice';
 
 type InputsType = {
   name: string;
@@ -19,14 +20,30 @@ type InputsType = {
 
 export default function SignUpForm(): JSX.Element {
   const dispatch = useAppDispatch();
-  const [inputs, setInputs] = useState<InputsType>({
-    name: '',
-    email: '',
-    password: '',
-    dateOfBirth: '',
-    sex: '',
-    photo: null,
-  });
+  const users = useAppSelector((store) => store.user);
+
+  const [inputs, setInputs] = useState<InputsType>(
+    users.currUser?.name
+      ? {
+          name: users?.currUser.name,
+          email: users?.currUser.email,
+          password: '',
+          dateOfBirth: moment(users?.currUser.dateOfBirth).format('YYYY-MM-DD'),
+          sex: users?.currUser.sex,
+          photo: null,
+        }
+      : {
+          name: '',
+          email: '',
+          password: '',
+          dateOfBirth: '',
+          sex: '',
+          photo: null,
+        },
+  );
+  // console.log(inputs);
+  console.log(inputs);
+
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputs((prev) => ({
       ...prev,
@@ -51,7 +68,12 @@ export default function SignUpForm(): JSX.Element {
     }
   };
   return (
-    <form autoComplete="off" onSubmit={(e) => dispatch(signUpHandler(e, inputs))}>
+    <form
+      autoComplete="off"
+      onSubmit={(e) =>
+        users.isEdit ? dispatch(editHandler(e, inputs)) : dispatch(signUpHandler(e, inputs))
+      }
+    >
       <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>
         <Box
           component="form"
@@ -67,6 +89,7 @@ export default function SignUpForm(): JSX.Element {
             label="Ваше имя"
             variant="standard"
             style={{ width: '100%' }}
+            value={inputs.name}
           />
           <TextField
             disabled={inputs.name.length < 1}
@@ -75,20 +98,23 @@ export default function SignUpForm(): JSX.Element {
             label="Ваш e-mail"
             variant="standard"
             style={{ width: '100%' }}
+            value={inputs.email}
           />
 
-          <TextField
-            disabled={!inputs.email.includes('@') && inputs.email.length < 4}
-            type="password"
-            name="password"
-            onChange={changeHandler}
-            label="Ваш пароль"
-            variant="standard"
-            style={{ width: '100%' }}
-          />
+          {!users.isEdit && (
+            <TextField
+              disabled={!inputs.email.includes('@') && inputs.email.length < 4}
+              type="password"
+              name="password"
+              onChange={changeHandler}
+              label="Ваш пароль"
+              variant="standard"
+              style={{ width: '100%' }}
+            />
+          )}
 
           <TextField
-            disabled={inputs.password.length < 6}
+            disabled={users.isEdit ? false : inputs.password.length < 6}
             id="date"
             label="Дата рождения"
             type="date"
@@ -96,12 +122,13 @@ export default function SignUpForm(): JSX.Element {
             InputLabelProps={{
               shrink: true,
             }}
+            value={inputs.dateOfBirth}
             name="dateOfBirth"
             onChange={changeHandler}
           />
           <InputLabel id="demo-simple-select-label">Ваш пол</InputLabel>
           <Select
-            disabled={inputs.password.length < 6}
+            disabled={users.isEdit ? false : inputs.password.length < 6}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             name="sex"
@@ -112,8 +139,8 @@ export default function SignUpForm(): JSX.Element {
               handleChange(e);
             }}
           >
-            <MenuItem value="M">М</MenuItem>
-            <MenuItem value="F">Ж</MenuItem>
+            <MenuItem value="мужской">Мужской</MenuItem>
+            <MenuItem value="женский">Женский</MenuItem>
           </Select>
 
           <ListItem style={{ marginTop: '1px', overflow: 'hidden', width: '100%' }}>
@@ -131,7 +158,12 @@ export default function SignUpForm(): JSX.Element {
             <input name="photo" type="file" id="file" hidden onChange={addPhotoHandler} />
           </Button>
         </Box>
-        <Button disabled={!inputs.photo} type="submit" variant="contained" endIcon={<SendIcon />}>
+        <Button
+          disabled={users.isEdit ? false : !inputs.photo}
+          type="submit"
+          variant="contained"
+          endIcon={<SendIcon />}
+        >
           Отправить
         </Button>
       </div>
