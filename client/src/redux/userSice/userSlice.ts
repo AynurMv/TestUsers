@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
 import type { AppThunk } from '../hooks';
 
-type BackendUser = {
+export type BackendUser = {
   id: number;
   name: string;
   email: string;
@@ -165,24 +165,18 @@ export const signInHandler =
       .catch(console.log);
   };
 
-export const logoutHandler =
-  (userId: number): AppThunk =>
-  (dispatch) => {
-    axios('/auth/logout')
-      .then(() => dispatch(logoutUser(userId)))
-      .catch(console.log);
-  };
-
-export const checkAuth = (): AppThunk => (dispatch) => {
-  axios<BackendUser>('/auth/check')
-    .then((res) => dispatch(setUser({ ...res.data })))
-    .catch(console.log);
-};
-
 export const setAllUsersAsync = (): AppThunk => (dispatch) => {
-  axios<BackendUser[]>('/users')
+  axios<BackendUser[]>('/api/user')
     .then((res) => dispatch(setAllUsers(res.data)))
     .catch(console.log);
 };
+
+export const logoutHandler =
+  (userId: number): AppThunk =>
+  (dispatch) => {
+    axios('/api/user/logout')
+      .then(() => dispatch(logoutUser(userId)))
+      .catch(console.log);
+  };
 
 export default userSlice.reducer;

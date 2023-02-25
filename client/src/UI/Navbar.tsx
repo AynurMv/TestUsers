@@ -61,7 +61,7 @@ export default function Navbar(): JSX.Element {
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           {user.currUser && (
             <Typography
-              onClick={() => navigate('/account')}
+              onClick={() => navigate('/users')}
               variant="h6"
               noWrap
               component="a"
@@ -75,7 +75,7 @@ export default function Navbar(): JSX.Element {
                 textDecoration: 'none',
               }}
             >
-              My account
+              Все пользователи
             </Typography>
           )}
           <Box sx={{ flexGrow: 1, flexDirection: 'row', display: { xs: 'flex', md: 'none' } }}>

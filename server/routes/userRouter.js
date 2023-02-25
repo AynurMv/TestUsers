@@ -84,6 +84,15 @@ router.post('/signin', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 router.get('/logout', (req, res) => {
   try {
     req.session.destroy();
