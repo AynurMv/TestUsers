@@ -1,7 +1,7 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, Box, TextField} from '@mui/material';
+import { Button, Box, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux/hooks';
 import { signInHandler } from '../redux/userSice/userSlice';
 
@@ -12,6 +12,7 @@ type InputsType = {
 
 export default function SignInForm(): JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState<InputsType>({
     email: '',
     password: '',
@@ -24,7 +25,7 @@ export default function SignInForm(): JSX.Element {
   };
 
   return (
-    <form autoComplete="off" onSubmit={(e) => dispatch(signInHandler(e, inputs))}>
+    <form autoComplete="off" onSubmit={(e) => dispatch(signInHandler(e, inputs, navigate))}>
       <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>
         <Box
           component="form"
@@ -52,7 +53,12 @@ export default function SignInForm(): JSX.Element {
             style={{ width: '100%' }}
           />
         </Box>
-        <Button disabled={!inputs.password} type="submit" variant="contained" endIcon={<SendIcon />}>
+        <Button
+          disabled={!inputs.password}
+          type="submit"
+          variant="contained"
+          endIcon={<SendIcon />}
+        >
           Войти
         </Button>
       </div>

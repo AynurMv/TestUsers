@@ -6,6 +6,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import Select from '@mui/material/Select';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { signUpHandler, editHandler } from '../redux/userSice/userSlice';
 
@@ -21,7 +22,7 @@ type InputsType = {
 export default function SignUpForm(): JSX.Element {
   const dispatch = useAppDispatch();
   const users = useAppSelector((store) => store.user);
-
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState<InputsType>(
     users.currUser?.name
       ? {
@@ -41,8 +42,6 @@ export default function SignUpForm(): JSX.Element {
           photo: null,
         },
   );
-  // console.log(inputs);
-  console.log(inputs);
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputs((prev) => ({
@@ -71,7 +70,9 @@ export default function SignUpForm(): JSX.Element {
     <form
       autoComplete="off"
       onSubmit={(e) =>
-        users.isEdit ? dispatch(editHandler(e, inputs)) : dispatch(signUpHandler(e, inputs))
+        users.isEdit
+          ? dispatch(editHandler(e, inputs))
+          : dispatch(signUpHandler(e, inputs, navigate))
       }
     >
       <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>

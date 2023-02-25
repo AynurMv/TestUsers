@@ -6,16 +6,13 @@ const fileMiddleware = require('../middlewares/file');
 const router = express.Router();
 
 router.put('/', fileMiddleware.single('photo'), async (req, res) => {
-  const {
-    email, name, password, dateOfBirth, sex,
-  } = req.body;
+  const { email, name, password, dateOfBirth, sex } = req.body;
   try {
     const hashedPass = await bcrypt.hash(password, 10);
-    console.log(req.session);
     const editingUser = await User.findByPk(req.session.userSession.id);
     editingUser.email = email;
     editingUser.name = name;
-    if (req.photo?.originalname) editingUser.photo = req.photo.originalname;
+    if (req.file?.originalname) editingUser.photo = req.file.originalname;
     editingUser.dateOfBirth = dateOfBirth;
     editingUser.sex = sex;
     editingUser.password = hashedPass;
@@ -35,9 +32,7 @@ router.put('/', fileMiddleware.single('photo'), async (req, res) => {
 });
 
 router.post('/signup', fileMiddleware.single('photo'), async (req, res) => {
-  const {
-    email, name, password, dateOfBirth, sex,
-  } = req.body;
+  const { email, name, password, dateOfBirth, sex } = req.body;
   try {
     const hashedPass = await bcrypt.hash(password, 10);
     const [newUser, created] = await User.findOrCreate({

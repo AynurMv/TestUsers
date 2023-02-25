@@ -8,7 +8,6 @@ import { useAppSelector } from './redux/hooks';
 
 export default function UserCard(): JSX.Element {
   const currUser = useAppSelector((store) => store.user.currUser);
-  console.log(currUser);
   return (
     <Grid
       container

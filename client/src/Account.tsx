@@ -10,7 +10,6 @@ import { setIsEdit } from './redux/userSice/userSlice';
 export default function Account(): JSX.Element {
   const currUser = useAppSelector((store) => store.user.currUser);
   const dispatch = useAppDispatch();
-  console.log(currUser);
   return (
     <Grid
       container

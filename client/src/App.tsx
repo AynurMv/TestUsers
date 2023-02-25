@@ -8,7 +8,6 @@ import NotAuth from './NotAuth';
 
 function App(): JSX.Element {
   const users = useAppSelector((store) => store.user);
-  console.log(users);
 
   return (
     <>

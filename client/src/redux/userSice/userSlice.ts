@@ -1,10 +1,8 @@
-import { ClockNumberProps } from '@mui/x-date-pickers';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import type { NavigateFunction } from 'react-router-dom';
 import type { AppThunk } from '../hooks';
-import type { RootState } from '../store';
-// import type { FormUser } from './userTypes';
 
 type BackendUser = {
   id: number;
@@ -79,7 +77,11 @@ type SignUpInputs = {
 };
 
 export const signUpHandler =
-  (e: React.FormEvent<HTMLFormElement>, formInput: SignUpInputs): AppThunk =>
+  (
+    e: React.FormEvent<HTMLFormElement>,
+    formInput: SignUpInputs,
+    navigate: NavigateFunction,
+  ): AppThunk =>
   (dispatch) => {
     e.preventDefault();
     if (formInput.photo) {
@@ -96,9 +98,9 @@ export const signUpHandler =
       })
         .then((resp) => resp.json())
         .then((resp: BackendUser) => {
-          console.log(resp);
           dispatch(setUser(resp));
           dispatch(setSignUp(false));
+          navigate('/account');
         })
         .catch(console.log);
     } else {
@@ -114,6 +116,7 @@ type EditInputs = {
   sex: string;
   photo: File | null;
 };
+
 
 export const editHandler =
   (e: React.FormEvent<HTMLFormElement>, formInput: EditInputs): AppThunk =>
@@ -133,7 +136,6 @@ export const editHandler =
     })
       .then((resp) => resp.json())
       .then((resp: BackendUser) => {
-        console.log(resp);
         dispatch(setUser(resp));
         dispatch(setIsEdit(false));
       })
@@ -146,15 +148,19 @@ type SignInInputs = {
 };
 
 export const signInHandler =
-  (e: React.FormEvent<HTMLFormElement>, formInput: SignInInputs): AppThunk =>
+  (
+    e: React.FormEvent<HTMLFormElement>,
+    formInput: SignInInputs,
+    navigate: NavigateFunction,
+  ): AppThunk =>
   (dispatch) => {
     e.preventDefault();
     axios
       .post<BackendUser>('/api/user/signin', formInput)
       .then((res) => {
-        console.log(res.data, 'slice signIn cookie');
         dispatch(setUser({ ...res.data }));
         dispatch(setSignIn(false));
+        navigate('/account');
       })
       .catch(console.log);
   };
