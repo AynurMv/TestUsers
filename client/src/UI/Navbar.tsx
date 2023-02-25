@@ -12,15 +12,22 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { useAppSelector } from '../redux/hooks';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setSignIn, setSignUp } from '../redux/userSice/userSlice';
 
 // const pages = ['Products', 'Pricing', 'Blog'];
 const pages = ['Войти', 'Зарегистрироваться'];
 
 const settings = ['Профиль', 'Выйти'];
 
+// type NavbarPropsType = {
+//   setIsSignUp: React.Dispatch<React.SetStateAction<boolean>>;
+// };
+
 export default function Navbar(): JSX.Element {
   const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -31,14 +38,28 @@ export default function Navbar(): JSX.Element {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = (): void => {
+  const navigate = useNavigate();
+  const handleCloseNavMenu = (page: string): void => {
+    console.log(page);
+    switch (page) {
+      
+      case pages[0]:
+        dispatch(setSignIn(true));
+        // setIsSignUp(true);
+        break;
+      case pages[1]:
+        dispatch(setSignUp(true));
+        // setIsSignUp(true);
+        break;
+      default:
+        alert('Что-то пошло не так');
+    }
     setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = (): void => {
     setAnchorElUser(null);
   };
-  console.log(!user.currUser, anchorElNav);
 
   return (
     <AppBar position="static">
@@ -47,10 +68,10 @@ export default function Navbar(): JSX.Element {
           {/* <Box sx={{ flexDirection: 'row' }}> */}
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
+            onClick={() => navigate('/')}
             variant="h6"
             noWrap
             component="a"
-            href="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -95,7 +116,7 @@ export default function Navbar(): JSX.Element {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
@@ -130,7 +151,7 @@ export default function Navbar(): JSX.Element {
               {pages.map((page) => (
                 <Button
                   key={page}
-                  onClick={handleCloseNavMenu}
+                  onClick={() => handleCloseNavMenu(page)}
                   sx={{ my: 2, color: 'white', display: 'block' }}
                 >
                   {page}

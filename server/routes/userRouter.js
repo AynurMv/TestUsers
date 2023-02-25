@@ -5,11 +5,6 @@ const fileMiddleware = require('../middlewares/file');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const userId = req.session?.userId;
-  res.json({ userId });
-});
-
 router.post('/signup', fileMiddleware.single('photo'), async (req, res) => {
   const { email, name, password, dateOfBirth, sex } = req.body;
   try {
@@ -41,11 +36,17 @@ router.post('/signin', async (req, res) => {
   try {
     const currUser = await User.findOne({ where: { email } });
     const compare = await bcrypt.compare(password, currUser.password);
+    console.log(currUser, compare);
     if (compare) {
-      req.session.userId = currUser.id;
-      req.session.userName = currUser.name;
-      req.session.userSession = currUser.email;
-      res.json({ name: currUser.name });
+      req.session.userSession = {
+        id: currUser.id,
+        email: currUser.email,
+        name: currUser.name,
+        photo: currUser.photo,
+        dateOfBirth: currUser.dateOfBirth,
+        sex: currUser.sex,
+      };
+      res.json(req.session.userSession);
     } else {
       res.sendStatus(401);
     }
@@ -53,6 +54,7 @@ router.post('/signin', async (req, res) => {
     console.log(error.message);
   }
 });
+
 router.get('/logout', (req, res) => {
   try {
     req.session.destroy();

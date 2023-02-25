@@ -17,7 +17,7 @@ type InputsType = {
   photo: null | File;
 };
 
-export default function SignUpModal(): JSX.Element {
+export default function SignUpForm(): JSX.Element {
   const dispatch = useAppDispatch();
   const [inputs, setInputs] = useState<InputsType>({
     name: '',
@@ -126,7 +126,7 @@ export default function SignUpModal(): JSX.Element {
               />
             )}
           </ListItem>
-          <Button variant="contained" component="label">
+          <Button disabled={!inputs.sex} variant="contained" component="label">
             Загрузите фото
             <input name="photo" type="file" id="file" hidden onChange={addPhotoHandler} />
           </Button>

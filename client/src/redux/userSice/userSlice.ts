@@ -18,17 +18,16 @@ type BackendUser = {
 type UsersState = {
   currUser: BackendUser | null;
   allUsers: BackendUser[];
-};
-
-export type FormUser = {
-  name: string;
-  password: string;
+  isSignUp: boolean;
+  isSignIn: boolean;
 };
 
 // Define the initial state using that type
 const initialState: UsersState = {
   currUser: null,
   allUsers: [],
+  isSignUp: false,
+  isSignIn: false,
 };
 
 export const userSlice = createSlice({
@@ -37,10 +36,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<BackendUser>) => ({
+      ...state,
       currUser: action.payload,
       allUsers: [...state.allUsers, action.payload],
     }),
     logoutUser: (state, action: PayloadAction<BackendUser['id']>) => ({
+      ...state,
       currUser: null,
       allUsers: state.allUsers.filter((user) => user.id !== action.payload),
     }),
@@ -48,24 +49,37 @@ export const userSlice = createSlice({
       ...state,
       allUsers: action.payload,
     }),
+    setSignUp: (state, action: PayloadAction<UsersState['isSignUp']>) => ({
+      ...state,
+      isSignUp: action.payload,
+    }),
+    setSignIn: (state, action: PayloadAction<UsersState['isSignIn']>) => ({
+      ...state,
+      isSignIn: action.payload,
+    }),
   },
 });
 
-export const { setUser, logoutUser, setAllUsers } = userSlice.actions;
+export const { setUser, logoutUser, setAllUsers, setSignUp, setSignIn } = userSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectUser = (state: RootState): UserState => state.user;
 
-export const signInHandler =
-  (e: React.FormEvent<HTMLFormElement>, formInput: FormUser): AppThunk =>
-  (dispatch) => {
-    axios
-      .post<BackendUser>('/auth', formInput)
-      .then((res) => dispatch(setUser({ ...res.data })))
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+// type FormUser = {
+//   name: string;
+//   password: string;
+// };
+
+// export const signInHandler =
+//   (e: React.FormEvent<HTMLFormElement>, formInput: FormUser): AppThunk =>
+//   (dispatch) => {
+//     axios
+//       .post<BackendUser>('/auth', formInput)
+//       .then((res) => dispatch(setUser({ ...res.data })))
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   };
 
 type SignUpInputs = {
   name: string;
@@ -96,6 +110,7 @@ export const signUpHandler =
         .then((resp: BackendUser) => {
           console.log(resp);
           dispatch(setUser(resp));
+          dispatch(setSignUp(false));
         })
         .catch(console.log);
       // axios
@@ -109,11 +124,31 @@ export const signUpHandler =
     }
   };
 
-export const logoutHandler = (userId: number): AppThunk => (dispatch) => {
-  axios('/auth/logout')
-    .then(() => dispatch(logoutUser(userId)))
-    .catch(console.log);
-};
+  type SignInInputs = {
+    email: string;
+    password: string;
+  };
+
+  export const signInHandler =
+  (e: React.FormEvent<HTMLFormElement>, formInput: SignInInputs): AppThunk =>
+  (dispatch) => {
+    e.preventDefault();
+      axios
+        .post<BackendUser>('/api/user/signin', formInput)
+        .then((res) => {
+          dispatch(setUser({ ...res.data }))
+          dispatch(setSignIn(false));
+        })
+        .catch(console.log);
+  };
+
+export const logoutHandler =
+  (userId: number): AppThunk =>
+  (dispatch) => {
+    axios('/auth/logout')
+      .then(() => dispatch(logoutUser(userId)))
+      .catch(console.log);
+  };
 
 export const checkAuth = (): AppThunk => (dispatch) => {
   axios<BackendUser>('/auth/check')
