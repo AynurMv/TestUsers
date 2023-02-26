@@ -38,12 +38,16 @@ export const userSlice = createSlice({
     setUser: (state, action: PayloadAction<BackendUser>) => ({
       ...state,
       currUser: action.payload,
-      allUsers: [...state.allUsers, action.payload],
+      allUsers: [...state.allUsers.filter(user=> user.id !== action.payload.id), action.payload],
     }),
-    logoutUser: (state, action: PayloadAction<BackendUser['id']>) => ({
+    editUser: (state, action: PayloadAction<BackendUser>) => ({
       ...state,
+      currUser: action.payload,
+    }),
+    logoutUser: (state) => ({
+      ...state,
+      // allUsers: state.allUsers.filter((user) => user.id !== state.currUser?.id),
       currUser: null,
-      allUsers: state.allUsers.filter((user) => user.id !== action.payload),
     }),
     setAllUsers: (state, action: PayloadAction<BackendUser[]>) => ({
       ...state,
@@ -64,7 +68,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUser, logoutUser, setAllUsers, setSignUp, setSignIn, setIsEdit } =
+export const { setUser, logoutUser, setAllUsers, setSignUp, setSignIn, setIsEdit, editUser } =
   userSlice.actions;
 
 type SignUpInputs = {
@@ -117,7 +121,6 @@ type EditInputs = {
   photo: File | null;
 };
 
-
 export const editHandler =
   (e: React.FormEvent<HTMLFormElement>, formInput: EditInputs): AppThunk =>
   (dispatch) => {
@@ -136,7 +139,7 @@ export const editHandler =
     })
       .then((resp) => resp.json())
       .then((resp: BackendUser) => {
-        dispatch(setUser(resp));
+        dispatch(editUser(resp));
         dispatch(setIsEdit(false));
       })
       .catch(console.log);
@@ -156,9 +159,16 @@ export const signInHandler =
   (dispatch) => {
     e.preventDefault();
     axios
-      .post<BackendUser>('/api/user/signin', formInput)
+      .post<BackendUser>('/api/user/signin', formInput) // то работает, то не работает
+      // fetch('http://localhost:3001/api/user/signup', {
+      //   method: 'POST',
+      //   credentials: 'include',
+      //   body: formInput,
+      // })
+      //   .then((resp) => resp.json())
       .then((res) => {
         dispatch(setUser({ ...res.data }));
+        // dispatch(setUser({ ...res }));
         dispatch(setSignIn(false));
         navigate('/account');
       })
@@ -170,13 +180,5 @@ export const setAllUsersAsync = (): AppThunk => (dispatch) => {
     .then((res) => dispatch(setAllUsers(res.data)))
     .catch(console.log);
 };
-
-export const logoutHandler =
-  (userId: number): AppThunk =>
-  (dispatch) => {
-    axios('/api/user/logout')
-      .then(() => dispatch(logoutUser(userId)))
-      .catch(console.log);
-  };
 
 export default userSlice.reducer;

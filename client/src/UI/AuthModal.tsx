@@ -9,11 +9,11 @@ import SignInForm from './SignInForm';
 import { useAppSelector } from '../redux/hooks';
 
 export default function AuthModal(): JSX.Element {
-  const {isEdit, isSignIn, isSignUp} = useAppSelector((store) => store.user);
+  const { isEdit, isSignIn, isSignUp } = useAppSelector((store) => store.user);
   let authText;
-  if(isEdit) authText = 'Редактирование';
-  if(isSignIn) authText = 'Войти';
-  if(isSignUp) authText = 'Регистрация';
+  if (isEdit) authText = 'Редактирование';
+  if (isSignIn) authText = 'Войти';
+  if (isSignUp) authText = 'Регистрация';
 
   return (
     <div
@@ -34,7 +34,7 @@ export default function AuthModal(): JSX.Element {
         className="modalwindow"
         style={{
           width: '40%',
-          height: '65%',
+          height: isSignIn ? '28%' : '65%',
           marginLeft: 'auto',
           marginRight: 'auto',
           marginTop: '10%',

@@ -14,16 +14,15 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { setSignIn, setSignUp } from '../redux/userSice/userSlice';
+import { logoutUser, setSignIn, setSignUp } from '../redux/userSice/userSlice';
 
 const pages = ['Войти', 'Зарегистрироваться'];
-
 const settings = ['Профиль', 'Выйти'];
-
 
 export default function Navbar(): JSX.Element {
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -34,15 +33,28 @@ export default function Navbar(): JSX.Element {
     setAnchorElUser(event.currentTarget);
   };
 
-  const navigate = useNavigate();
   const handleCloseNavMenu = (page: string): void => {
-    console.log(page);
     switch (page) {
       case pages[0]:
         dispatch(setSignIn(true));
         break;
       case pages[1]:
         dispatch(setSignUp(true));
+        break;
+      default:
+        alert('Что-то пошло не так');
+    }
+    setAnchorElNav(null);
+  };
+
+  const clickHandler = (setting: string): void => {
+    switch (setting) {
+      case 'Профиль':
+        navigate('/account');
+        break;
+      case 'Выйти':
+        dispatch(logoutUser());
+        navigate('/notauth');
         break;
       default:
         alert('Что-то пошло не так');
@@ -179,11 +191,14 @@ export default function Navbar(): JSX.Element {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {user.currUser?.id &&
+                settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography onClick={() => clickHandler(setting)} textAlign="center">
+                      {setting}
+                    </Typography>
+                  </MenuItem>
+                ))}
             </Menu>
           </Box>
         </Toolbar>

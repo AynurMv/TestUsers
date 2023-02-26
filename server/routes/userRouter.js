@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable no-unused-expressions */
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { User } = require('../db/models');
@@ -6,16 +8,14 @@ const fileMiddleware = require('../middlewares/file');
 const router = express.Router();
 
 router.put('/', fileMiddleware.single('photo'), async (req, res) => {
-  const { email, name, password, dateOfBirth, sex } = req.body;
   try {
-    const hashedPass = await bcrypt.hash(password, 10);
+    const { email, name, dateOfBirth, sex } = req.body;
     const editingUser = await User.findByPk(req.session.userSession.id);
     editingUser.email = email;
     editingUser.name = name;
     if (req.file?.originalname) editingUser.photo = req.file.originalname;
     editingUser.dateOfBirth = dateOfBirth;
     editingUser.sex = sex;
-    editingUser.password = hashedPass;
     await editingUser.save();
     req.session.userSession = {
       id: editingUser.id,
@@ -78,7 +78,6 @@ router.post('/signin', async (req, res) => {
       };
     }
     res.json(req.session.userSession);
-    res.sendStatus(401);
   } catch (error) {
     console.log(error.message);
   }

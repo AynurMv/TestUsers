@@ -11,8 +11,8 @@ export default function UserCard({ user }: { user: BackendUser }): JSX.Element {
   const usersBirthDay = new Date(user?.dateOfBirth).getTime();
   const userAge = Math.floor((curDate - usersBirthDay) / (60 * 60 * 24 * 1000 * 365));
   return (
-    <Box width="1000" height="900" alignItems="center" justifyContent="center">
-      <Card sx={{ maxWidth: 345 }}>
+    <Box alignItems="center" justifyContent="center">
+      <Card sx={{ width: 345 }}>
         <CardActionArea>
           <CardMedia
             component="img"
@@ -26,7 +26,7 @@ export default function UserCard({ user }: { user: BackendUser }): JSX.Element {
             </Typography>
             {user?.dateOfBirth && (
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-               Полных лет: {userAge}
+                Полных лет: {userAge}
               </Typography>
             )}
           </CardContent>
