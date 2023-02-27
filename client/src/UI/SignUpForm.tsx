@@ -71,7 +71,7 @@ export default function SignUpForm(): JSX.Element {
       autoComplete="off"
       onSubmit={(e) =>
         users.isEdit
-          ? dispatch(editHandler(e, inputs))
+          ? dispatch(editHandler(e, inputs, navigate))
           : dispatch(signUpHandler(e, inputs, navigate))
       }
     >

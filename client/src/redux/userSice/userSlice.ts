@@ -38,11 +38,15 @@ export const userSlice = createSlice({
     setUser: (state, action: PayloadAction<BackendUser>) => ({
       ...state,
       currUser: action.payload,
-      allUsers: [...state.allUsers.filter(user=> user.id !== action.payload.id), action.payload],
+      allUsers: [...state.allUsers.filter((user) => user.id !== action.payload.id), action.payload],
     }),
     editUser: (state, action: PayloadAction<BackendUser>) => ({
       ...state,
       currUser: action.payload,
+      allUsers: state.allUsers.map((user) => {
+        if (user.id === action.payload.id) return action.payload;
+        return user;
+      }),
     }),
     logoutUser: (state) => ({
       ...state,
@@ -122,7 +126,11 @@ type EditInputs = {
 };
 
 export const editHandler =
-  (e: React.FormEvent<HTMLFormElement>, formInput: EditInputs): AppThunk =>
+  (
+    e: React.FormEvent<HTMLFormElement>,
+    formInput: EditInputs,
+    navigate: NavigateFunction,
+  ): AppThunk =>
   (dispatch) => {
     e.preventDefault();
     const data = new FormData();
@@ -141,6 +149,7 @@ export const editHandler =
       .then((resp: BackendUser) => {
         dispatch(editUser(resp));
         dispatch(setIsEdit(false));
+        navigate('/account');
       })
       .catch(console.log);
   };
