@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { Button, Box, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../redux/hooks';
-import { signInHandler } from '../redux/userSice/userSlice';
+import { useAppDispatch } from '../../Redux/hooks';
+import { signInHandler } from '../../Redux/userSice/userSlice';
 
 type InputsType = {
   email: string;
@@ -24,8 +24,11 @@ export default function SignInForm(): JSX.Element {
     }));
   };
 
+  const submitHandler = (e: React.FormEvent<HTMLFormElement>): void =>
+    dispatch(signInHandler(e, inputs, navigate));
+
   return (
-    <form autoComplete="off" onSubmit={(e) => dispatch(signInHandler(e, inputs, navigate))}>
+    <form autoComplete="off" onSubmit={submitHandler}>
       <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>
         <Box
           component="form"

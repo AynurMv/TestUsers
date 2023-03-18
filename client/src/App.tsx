@@ -1,20 +1,18 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
-import Navbar from './UI/Navbar';
-import AuthModal from './UI/AuthModal';
-import Account from './Account';
-import NotAuth from './NotAuth';
-import { setAllUsersAsync } from './redux/userSice/userSlice';
-import Users from './Users';
+import { useAppDispatch, useAppSelector } from './Redux/hooks';
+import Navbar from './Components/Navbar';
+import AuthModal from './Components/AuthModal';
+import { setAllUsersAsync } from './Redux/userSice/userSlice';
+import AccountPage from './Pages/AccountPage';
+import AllUsersPage from './Pages/AllUsersPage';
+import NotAuthPage from './Pages/NotAuthPage';
 
 function App(): JSX.Element {
   const users = useAppSelector((store) => store.user);
-  console.log(users);
-  
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(setAllUsersAsync())
+    dispatch(setAllUsersAsync());
   }, []);
   return (
     <>
@@ -24,14 +22,11 @@ function App(): JSX.Element {
           path="/"
           element={<Navigate to={users.currUser?.id ? '/account' : '/notauth'} replace />}
         />
-        <Route index path="/account" element={<Account />} />
-        <Route index path="/users" element={<Users />} />
-        <Route index path="/notauth" element={<NotAuth />} />
+        <Route index path="/account" element={<AccountPage />} />
+        <Route index path="/users" element={<AllUsersPage />} />
+        <Route index path="/notauth" element={<NotAuthPage />} />
       </Routes>
       {(users.isSignUp || users.isSignIn || users.isEdit) && <AuthModal />}
-      {/* {users.isSignIn && <AuthModal />}
-      {users.isEdit && <AuthModal />} */}
-      {/* get it small */}
     </>
   );
 }

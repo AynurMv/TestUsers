@@ -13,8 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { logoutUser, setSignIn, setSignUp } from '../redux/userSice/userSlice';
+import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
+import { logoutUser, setIsSignIn, setIsSignUp } from '../../Redux/userSice/userSlice';
 
 const pages = ['Войти', 'Зарегистрироваться'];
 const settings = ['Профиль', 'Выйти'];
@@ -36,10 +36,10 @@ export default function Navbar(): JSX.Element {
   const handleCloseNavMenu = (page: string): void => {
     switch (page) {
       case pages[0]:
-        dispatch(setSignIn(true));
+        dispatch(setIsSignIn(true));
         break;
       case pages[1]:
-        dispatch(setSignUp(true));
+        dispatch(setIsSignUp(true));
         break;
       default:
         alert('Что-то пошло не так');

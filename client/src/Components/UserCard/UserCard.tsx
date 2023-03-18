@@ -3,8 +3,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Box, Button, CardActionArea, CardActions, Grid } from '@mui/material';
-import type { BackendUser } from './redux/userSice/userSlice';
+import { Box, CardActionArea } from '@mui/material';
+import type { BackendUser } from '../../Redux/userSice/userTypes';
 
 export default function UserCard({ user }: { user: BackendUser }): JSX.Element {
   const curDate = new Date().getTime();

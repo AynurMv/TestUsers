@@ -7,8 +7,8 @@ import Select from '@mui/material/Select';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { signUpHandler, editHandler } from '../redux/userSice/userSlice';
+import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
+import { signUpHandler, editHandler } from '../../Redux/userSice/userSlice';
 
 type InputsType = {
   name: string;
@@ -66,15 +66,14 @@ export default function SignUpForm(): JSX.Element {
       }));
     }
   };
+
+  const submitHandler = (e: React.FormEvent<HTMLFormElement>): void =>
+    users.isEdit
+      ? dispatch(editHandler(e, inputs, navigate))
+      : dispatch(signUpHandler(e, inputs, navigate));
+
   return (
-    <form
-      autoComplete="off"
-      onSubmit={(e) =>
-        users.isEdit
-          ? dispatch(editHandler(e, inputs, navigate))
-          : dispatch(signUpHandler(e, inputs, navigate))
-      }
-    >
+    <form autoComplete="off" onSubmit={submitHandler}>
       <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>
         <Box
           component="form"
@@ -133,9 +132,7 @@ export default function SignUpForm(): JSX.Element {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             name="sex"
-            // label="Ваш пол"
             value={inputs.sex}
-            // defaultValue=""
             onChange={(e) => {
               handleChange(e);
             }}

@@ -5,14 +5,17 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Box, Button, CardActionArea, CardActions, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { setIsEdit } from './redux/userSice/userSlice';
+import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
+import { setIsEdit } from '../../Redux/userSice/userSlice';
 
-export default function Account(): JSX.Element {
+export default function AccountPage(): JSX.Element {
   const currUser = useAppSelector((store) => store.user.currUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   if (currUser?.id) navigate('/notauth');
+  const image = currUser?.photo
+    ? `http://localhost:3001/images/${currUser?.photo}`
+    : 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Anonymous_emblem.svg';
   return (
     <Grid
       container
@@ -26,16 +29,7 @@ export default function Account(): JSX.Element {
         <Box width="1000" height="900" alignItems="center" justifyContent="center">
           <Card sx={{ maxWidth: 345 }}>
             <CardActionArea>
-              <CardMedia
-                component="img"
-                height="400"
-                image={
-                  currUser?.photo
-                    ? `http://localhost:3001/images/${currUser?.photo}`
-                    : 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Anonymous_emblem.svg'
-                }
-                alt="User Photo"
-              />
+              <CardMedia component="img" height="400" image={image} alt="User Photo" />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {currUser?.name}

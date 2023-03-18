@@ -1,8 +1,11 @@
 import React from 'react';
+import './style.css';
 
 export default function NotAuth(): JSX.Element {
   return (
-    <div style={{ display: 'flex', height: '90vh', justifyContent: 'center', alignItems: 'center' }}>
+    <div
+      className='notAuthorized'
+    >
       <div>Пожалуйста, авторизуйтесь</div>
     </div>
   );

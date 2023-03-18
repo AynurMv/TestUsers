@@ -4,45 +4,32 @@ import * as React from 'react';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import SignUpForm from './SignUpForm';
-import SignInForm from './SignInForm';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
+import SignInForm from '../SignInForm';
+import SignUpForm from '../SignUpForm';
+import './style.css';
+import { setIsEdit, setIsSignIn, setIsSignUp } from '../../Redux/userSice/userSlice';
 
 export default function AuthModal(): JSX.Element {
   const { isEdit, isSignIn, isSignUp } = useAppSelector((store) => store.user);
-  let authText;
+  let authText = null;
   if (isEdit) authText = 'Редактирование';
   if (isSignIn) authText = 'Войти';
   if (isSignUp) authText = 'Регистрация';
-
+  const dispatch = useAppDispatch();
   return (
     <div
-      style={{
-        height: '100vh',
-        width: '100%',
-        backgroundColor: '#0000006e',
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        zIndex: '100',
-      }}
+      className="modalBox"
       onClick={(e) => {
         e.stopPropagation();
+        dispatch(setIsSignUp(false));
+        dispatch(setIsSignIn(false));
+        dispatch(setIsEdit(false));
       }}
     >
       <div
         className="modalwindow"
-        style={{
-          width: '40%',
-          height: isSignIn ? '28%' : '65%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: '10%',
-          border: '3px solid rgba(0, 0, 0, 0.05)',
-          borderRadius: '10px',
-          backgroundColor: 'white',
-          opacity: '1',
-        }}
+        style={{ height: isSignIn ? '28%' : '65%' }}
         onClick={(e) => {
           e.stopPropagation();
         }}
