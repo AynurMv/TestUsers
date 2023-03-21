@@ -29,17 +29,13 @@ export default function AuthModal(): JSX.Element {
     >
       <div
         className="modalwindow"
-        style={{ height: isSignIn ? '28%' : '65%' }}
+        style={{ height: isSignIn ? '28%' : '55%' }}
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
         <DialogTitle style={{ textAlign: 'center' }}>{authText}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            {isSignIn ? <SignInForm /> : <SignUpForm />}
-          </DialogContentText>
-        </DialogContent>
+        <div style={{display: 'flex', justifyContent: 'center'}}>{isSignIn ? <SignInForm /> : <SignUpForm />}</div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ export default function SignInForm(): JSX.Element {
     email: '',
     password: '',
   });
+
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputs((prev) => ({
       ...prev,
@@ -24,47 +25,40 @@ export default function SignInForm(): JSX.Element {
     }));
   };
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>): void =>
+  const submitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
     dispatch(signInHandler(e, inputs, navigate));
+  };
+
+  const textFieldStyle = { width: '100%', marginBottom: '1rem' };
+  const boxStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '90%',
+    justifyContent: 'center',
+  };
 
   return (
-    <form autoComplete="off" onSubmit={submitHandler}>
-      <div className="form-conatainer" style={{ display: 'flex', flexDirection: 'column' }}>
-        <Box
-          component="form"
-          noValidate
-          sx={{
-            '& > :not(style)': { m: 1, width: '26ch' },
-          }}
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
-          <TextField
-            name="email"
-            onChange={changeHandler}
-            label="Ваш e-mail"
-            variant="standard"
-            style={{ width: '100%' }}
-          />
-
-          <TextField
-            disabled={!inputs.email.includes('@') && inputs.email.length < 4}
-            type="password"
-            name="password"
-            onChange={changeHandler}
-            label="Ваш пароль"
-            variant="standard"
-            style={{ width: '100%' }}
-          />
-        </Box>
-        <Button
-          disabled={!inputs.password}
-          type="submit"
-          variant="contained"
-          endIcon={<SendIcon />}
-        >
-          Войти
-        </Button>
-      </div>
-    </form>
+    <Box component="form" onSubmit={submitHandler} autoComplete="off" sx={boxStyle}>
+      <TextField
+        name="email"
+        onChange={changeHandler}
+        label="Ваш e-mail"
+        variant="standard"
+        style={textFieldStyle}
+      />
+      <TextField
+        disabled={!inputs.email.includes('@') && inputs.email.length < 4}
+        type="password"
+        name="password"
+        onChange={changeHandler}
+        label="Ваш пароль"
+        variant="standard"
+        style={textFieldStyle}
+      />
+      <Button disabled={!inputs.password} type="submit" variant="contained" endIcon={<SendIcon />}>
+        Войти
+      </Button>
+    </Box>
   );
 }
