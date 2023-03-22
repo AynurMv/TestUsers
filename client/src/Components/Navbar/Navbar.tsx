@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,14 +14,22 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
-import { logoutUser, setIsSignIn, setIsSignUp } from '../../Redux/userSice/userSlice';
+import {
+  logoutUser,
+  setAllUsersAsync,
+  setIsSignIn,
+  setIsSignUp,
+} from '../../Redux/userSice/userSlice';
 
 const pages = ['Войти', 'Зарегистрироваться'];
 const settings = ['Профиль', 'Выйти'];
 
 export default function Navbar(): JSX.Element {
-  const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setAllUsersAsync());
+  }, []);
+  const user = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -162,45 +170,42 @@ export default function Navbar(): JSX.Element {
             </Box>
           )}
 
-          <Box sx={{ flexGrow: 0, justifyContent: 'flex-end' }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src={
-                    user?.currUser?.photo
-                      ? `http://localhost:3001/images/${user.currUser.photo}`
-                      : '/static/images/avatar/1.jpg'
-                  }
-                />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {user.currUser?.id &&
-                settings.map((setting) => (
+          {user.currUser?.photo && (
+            <Box sx={{ flexGrow: 0, justifyContent: 'flex-end' }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={`http://localhost:3001/images/${user.currUser.photo}`}
+                  />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
                     <Typography onClick={() => clickHandler(setting)} textAlign="center">
                       {setting}
                     </Typography>
                   </MenuItem>
                 ))}
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
