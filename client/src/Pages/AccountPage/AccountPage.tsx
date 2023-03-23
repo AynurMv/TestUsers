@@ -4,15 +4,12 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Box, Button, CardActionArea, CardActions, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../Redux/hooks';
 import { setIsEdit } from '../../Redux/userSice/userSlice';
 
 export default function AccountPage(): JSX.Element {
   const currUser = useAppSelector((store) => store.user.currUser);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  if (currUser?.id) navigate('/notauth');
   const image = currUser?.photo
     ? `http://localhost:3001/images/${currUser?.photo}`
     : 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Anonymous_emblem.svg';
